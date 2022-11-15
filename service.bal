@@ -22,6 +22,11 @@ service / on new http:Listener(9090) {
                 policeDetail.push(data);
             };
         check queryResponse.close();
+        error? e =  mysqlEp.close();
+           if(e is error){
+            return e;
+         }
+
         return policeDetail;
 
     }
