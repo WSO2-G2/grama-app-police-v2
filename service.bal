@@ -13,10 +13,10 @@ type policeData record {
 # bound to port `9090`.
 service / on new http:Listener(9090) {
 
-    isolated resource function get getalldetails() returns policeData[]|error? {
+    isolated resource function get getalldetails(string nic) returns boolean|error? {
         policeData[] policeDetail=[];
 
-        stream<policeData, error?> queryResponse = mysqlEp->query(sqlQuery = `SELECT * FROM userDetails`);
+        stream<policeData, error?> queryResponse = mysqlEp->query(sqlQuery = `SELECT * FROM userDetails where nic=${nic}`);
         check from policeData data in queryResponse
             do {
                 policeDetail.push(data);
@@ -27,7 +27,17 @@ service / on new http:Listener(9090) {
             return e;
          }
 
-        return policeDetail;
+         if(policeDetail.length()==0){
+             return  true;
+         }
+
+         else{
+             return  false;
+         }
+
+
+
+        //return policeDetail.length();
 
     }
 }
