@@ -13,9 +13,10 @@ type policeData record {
 # bound to port `9090`.
 service / on new http:Listener(9090) {
 
-    isolated resource function get getalldetails(string nic) returns boolean|error? {
+    isolated resource function get getalldetails(string nic) returns json|error? {
         final mysql:Client mysqlEp = check new (host = "workzone.c6yaihe9lzwl.us-west-2.rds.amazonaws.com", user = "admin", password = "Malithi1234", database = "gramaPoliceCheck", port = 3306);
         policeData[] policeDetail=[];
+        boolean result;
 
         stream<policeData, error?> queryResponse = mysqlEp->query(sqlQuery = `SELECT * FROM userDetails where nic=${nic}`);
         check from policeData data in queryResponse
@@ -29,12 +30,23 @@ service / on new http:Listener(9090) {
          }
 
          if(policeDetail.length()==0){
-             return  true;
+             result = false;
          }
 
          else{
-             return  false;
+             result = true;
          }
+
+         json response = {
+        statusCode: 200,
+        headers: {
+            "Access-Control-Allow-Headers" : "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+        },
+        body: result.toJsonString()
+    };
+        return response;
 
 
 
