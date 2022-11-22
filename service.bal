@@ -2,6 +2,11 @@ import ballerinax/mysql;
 import ballerinax/mysql.driver as _;
 import ballerina/http;
 
+configurable int PORT = ?;
+configurable string DB = ?;
+configurable string PASSWORD = ?;
+configurable string USER = ?;
+configurable string HOST = ?;
 
 
 type policeData record {
@@ -14,7 +19,7 @@ type policeData record {
 service / on new http:Listener(9090) {
 
     isolated resource function get getalldetails(string nic) returns json|error? {
-        final mysql:Client mysqlEp = check new (host = "workzone.c6yaihe9lzwl.us-west-2.rds.amazonaws.com", user = "admin", password = "Malithi1234", database = "gramaPoliceCheck", port = 3306);
+        final mysql:Client mysqlEp = check new (host = HOST, user = USER, password = PASSWORD, database = DB, port = PORT);
         policeData[] policeDetail=[];
         boolean result;
 
